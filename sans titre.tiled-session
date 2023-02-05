@@ -1,0 +1,88 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "E:/side scroler/Niveau_finale.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "E:/side scroler/Niveau_finale.tmx": {
+            "scale": 0.19636570130607608,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 804.6211683053789,
+                "y": 881.0092539039907
+            }
+        },
+        "E:/side scroler/png.tsx": {
+            "scaleInDock": 1
+        },
+        "Niveau.tmx": {
+            "expandedGroupLayers": [
+                17
+            ],
+            "scale": 0.75,
+            "selectedLayer": 6,
+            "viewCenter": {
+                "x": 1045.333333333333,
+                "y": 889.3333333333333
+            }
+        },
+        "Niveau_finale 2.tmx": {
+            "scale": 0.48767745599091417,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 801.759431765254,
+                "y": 881.7303213786681
+            }
+        },
+        "Niveau_finale.tmx": {
+            "expandedGroupLayers": [
+                16,
+                17
+            ],
+            "scale": 0.75,
+            "selectedLayer": 17,
+            "viewCenter": {
+                "x": 801.3333333333335,
+                "y": 879.3333333333333
+            }
+        },
+        "png.tsx": {
+            "scaleInDock": 1.5,
+            "scaleInEditor": 1
+        },
+        "sans titre.tmx": {
+            "scale": 0.25,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 804,
+                "y": 1204
+            }
+        }
+    },
+    "last.exportedFilePath": "E:/side scroler",
+    "last.imagePath": "E:/2d ld",
+    "lastUsedTilesetExportFilter": "Fichiers de jeu de tuiles JSON (*.tsj *.json)",
+    "map.height": 50,
+    "map.lastUsedFormat": "tmx",
+    "map.width": 50,
+    "openFiles": [
+        "png.tsx",
+        "Niveau_finale.tmx",
+        "E:/side scroler/Niveau_finale.tmx"
+    ],
+    "project": "sans titre.tiled-project",
+    "property.type": "bool",
+    "recentFiles": [
+        "Niveau_finale.tmx",
+        "png.tsx",
+        "E:/side scroler/Niveau_finale.tmx",
+        "Niveau.tmx",
+        "sans titre.tmx",
+        "Niveau_finale 2.tmx"
+    ],
+    "tileset.lastUsedFormat": "tsx"
+}

@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Mon 1er jeu Phaser</title>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+
+
+
+<body>
+
+    
+    <script type="text/javascript">
+
+
+var estSolide;        
+var plateformes;
+
+var score =0;
+var scoreText;
+var item
+var player;
+var perso;
+var cursors;
+var tileset;
+var playerhp = 10;
+var doublejump;
+var gameover =false;
+var manette =false;
+var enemie
+
+
+var HealthBar = function(game, providedConfig) {
+  this.game = game;
+ 
+  this.setupConfiguration(providedConfig);
+  this.setPosition(this.config.x, this.config.y);
+  this.drawBackground();
+  this.drawHealthBar();
+};
+HealthBar.prototype.mergeWithDefaultConfiguration = function(newConfig) {
+  var defaultConfig= {
+    width: 250,
+    height: 40,
+    x: 0,
+    y: 0,
+    bg: {
+      color: '#651828'
+    },
+    bar: {
+      color: '#FEFF03'
+    }
+  };
+ 
+  return mergeObjetcs(defaultConfig, newConfig);
+};
+ 
+
+
+var config = {
+    type: Phaser.AUTO,
+    width: 1600, height: 1600,
+    input:{gamepad:true},
+physics: {
+    default: 'arcade',
+    arcade: {
+        gravity: { y: 400 },
+        debug: false
+        
+    }},
+       
+scene: {preload: preload, create: create, update: update }
+};
+
+
+// 
+new Phaser.Game(config);
+
+
+ function preload() {
+    // new camera(200, 50, 100, 100)
+    this.load.image("Plateau_niveau_1", "png.png");
+    this.load.tilemapTiledJSON("carte", "Niveau_finale.json",)
+    this.load.spritesheet('perso','assets/perso.png',
+        { frameWidth: 32, frameHeight: 48 });
+}
+
+
+                            function create(){
+
+    // 
+    // ajout de tout les calques du niveau
+    // 
+
+    const carteDuNiveau = this.add.tilemap("carte");
+    const tileset = carteDuNiveau.addTilesetImage(
+          "png",
+          "Plateau_niveau_1"
+        ); 
+    const ciel = carteDuNiveau.createLayer(
+        "Groupe 1/ciel",
+        tileset
+    )
+    const ciel2 = carteDuNiveau.createLayer(
+        "Groupe 1/ciel 2",
+        tileset
+    )
+    const maison = carteDuNiveau.createLayer(
+        "Groupe 2/maison",
+        tileset
+    )
+    const terre = carteDuNiveau.createLayer(
+        "Groupe 2/terre",
+        tileset
+    
+    )
+    const CalquedeTuiles9 = carteDuNiveau.createLayer(
+        "Groupe 2/Calque de Tuiles 9",
+        tileset
+    )
+    const CalquedeTuiles2 = carteDuNiveau.createLayer(
+        "Groupe 2/Calque de Tuiles 2",
+        tileset
+    )
+    const CalquedeTuiles5 = carteDuNiveau.createLayer(
+        "Groupe 2/Calque de Tuiles 5",
+        tileset
+    )
+    const CalquedeTuiles4 = carteDuNiveau.createLayer(
+        "Groupe 2/Calque de Tuiles 4",
+        tileset
+    )
+    const brouillardtour = carteDuNiveau.createLayer(
+        "Groupe 3/brouillard tour",
+        tileset
+    )
+    // const brouillardmaison = carteDuNiveau.createLayer(
+        // "Groupe 3/brouillard maison",
+        // tileset
+    // )
+    const tour = carteDuNiveau.createLayer(
+        "tour",
+        tileset
+    )
+    const pieges = carteDuNiveau.createLayer(
+        "pieges",
+        tileset
+    )
+    const objet = carteDuNiveau.createLayer(
+        "objet",
+        tileset
+    )
+const gameover = carteDuNiveau.createLayer(
+    "game over",
+)
+
+    // 
+    // 
+    // fin des calques
+    // 
+    // 
+
+
+                                // mise en place du perso
+
+    player = this.physics.add.sprite(20, 1300, 'perso');
+    player.setBounce(0.2);
+    player.setCollideWorldBounds(true);
+
+    // mécaniques de mouvements et choix des touches pour se déplacer
+    this.anims.create({
+        key: 'left',
+        frames: this.anims.generateFrameNumbers('perso', {start:0,end:3}),
+        frameRate: 10,
+        repeat: -1
+    });
+    this.anims.create({
+        key: 'turn',
+        frames: [ { key: 'perso', frame: 4 } ],
+        frameRate: 20
+    });
+    this.anims.create({
+        key: 'right',
+        frames: this.anims.generateFrameNumbers('perso', {start:5,end:8}),
+        frameRate: 10,
+        repeat: -1
+    });
+    // mise en place du clavier et de la manette
+    cursors = this.input.keyboard.createCursorKeys();
+    this.input.gamepad.once('connected', function (pad) {
+                    manette = pad;
+                });
+
+                // mise en place de la camera et du suivit du joueur
+    this.physics.world.setBounds(0, 0, 1600, 1600);
+                this.cameras.main.setBounds(0, 0, 1600, 1600);
+                this.cameras.main.startFollow(player);
+
+                // new camerasManager(scene)
+                // cameras du joueur 
+                // new camera(20, 50, 100, 100)
+ 
+
+                // mise en place de l'enemie
+    enemie = this.physics.add.sprite(500, 1300, 'enemie');
+    enemie.setBounce(0.2);
+    enemie.setCollideWorldBounds(true);               
+
+
+
+
+// 
+// 
+// Debut de la mise en place de la colision du joueur et de l'enemie avec les plateformes et entre eux deux 
+// 
+// 
+ 
+
+    this.physics.add.collider(player, plateformes)
+    this.physics.add.collider(player,enemie)
+    this.physics.add.collider(enemie, plateformes)
+    this.physics.add.collider(enemie, player)
+ 
+    maison.setCollisionByProperty({ estSolide: true });   
+    this.physics.add.collider(player, maison); 
+    maison.setCollisionByProperty({ estSolide: true });   
+    this.physics.add.collider(enemie, maison);  
+
+    terre.setCollisionByProperty({ estSolide: true });
+    this.physics.add.collider(player, terre)
+    terre.setCollisionByProperty({ estSolide: true });
+    this.physics.add.collider(enemie, terre)
+ 
+    pieges.setCollisionByProperty({ estSolide: true });   
+    this.physics.add.collider(player, pieges)
+    pieges.setCollisionByProperty({ estSolide: true });   
+    this.physics.add.collider(enemie, pieges)
+ 
+    gameover.setCollisionByProperty({ estSolide: true});  
+    this.physics.add.collider(player, gameover)
+    gameover.setCollisionByProperty({ estSolide: true});  
+    this.physics.add.collider(enemie, gameover) 
+ 
+    objet.setCollisionByProperty({ estSolide: true});
+    this.physics.add.collider(player, objet)
+    objet.setCollisionByProperty({ estSolide: true});
+    this.physics.add.collider(enemie, objet)
+
+
+//
+//Fin de la mise en place de la colision du joueur et de l'enemie
+//
+//
+
+
+
+// mise en place de la fin de partie si le joueur touche l'enemie ou un facteur de fin de partie
+
+
+// if (player)on.hit gameover playerhp =playerhp-5
+    // if (playerhp)<0 
+        // player.setVelocityX(0);
+        // player.setVelocityY(0);
+        // print='Vous avez perdu'
+// 
+}
+
+//fin mise en place fin de partie 
+
+
+function update()
+{
+
+
+    // déplacement du perso
+
+
+    if (cursors.left.isDown){ 
+player.setVelocityX(-160); 
+player.anims.play('left', true); 
+}
+else if (cursors.right.isDown){
+player.setVelocityX(160); 
+player.anims.play('right', true);
+}
+else{ 
+player.setVelocityX(0);
+player.anims.play('turn');
+}
+if (cursors.up.isDown
+// && player.body.touching.down
+){
+
+player.setVelocityY(-200); 
+
+}
+
+
+// essaye de stop le perso si mort
+
+// if (playerhp<0){
+    // if (cursors.left.isDown){
+    // player.setVelocityX(-0);
+    // player.anims.play('left', true);
+    // }
+    // else if (cursors.right.isDown){ 
+    // player.setVelocityX(0);
+    // player.anims.play('right', true);
+    // }
+    // else{ 
+    // player.setVelocityX(0);
+    // player.anims.play('turn'); 
+    // }
+    // if (cursors.up.isDown && player.body.touching.down){
+        // player.setVelocityY(-0); 
+    // 
+    // }
+// else if (playerhp>0){
+// 
+// 
+    // if (cursors.left.isDown){ //si la touche gauche est appuyée
+    // player.setVelocityX(-160); //alors vitesse négative en X
+    // player.anims.play('left', true); //et animation => gauche
+    // }
+    // else if (cursors.right.isDown){ //sinon si la touche droite est appuyée
+    // player.setVelocityX(160); //alors vitesse positive en X
+    // player.anims.play('right', true); //et animation => droite
+    // }
+    // else{ // sinon
+    // player.setVelocityX(0); //vitesse nulle
+    // player.anims.play('turn'); //animation fait face caméra
+    // }
+    // if (cursors.up.isDown && player.body.touching.down){
+  
+    // player.setVelocityY(-330); //alors vitesse verticale négative
+
+    // }
+// }    
+}
+
+function collectobjet(player,objet){
+    objet.disableBody(true, true);
+    score += 1;
+    scoreText.setText('Points du joueur'+score);
+}
+
+// if (score) =<2;
+    // playerhp = playerhp+5
+    // player.setVelocityY(-400)
+
+// if (player.body.touching.gameover){
+    // playerhp=0
+// }
+
+       
+
+</script>
+</body>
+</html>
